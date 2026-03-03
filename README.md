@@ -54,22 +54,98 @@ A RESTful API for secure file storage built with **FastAPI**, **PostgreSQL**, **
 
 ### Prerequisites
 
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Running with Docker Compose (recommended)
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/OneSummon/S3-File-Storage-API.git
+cd S3-File-Storage-API
+```
+
+**2. Create `.env` file**
+
+```bash
+cp .env.example .env
+```
+
+Fill in your values:
+
+```env
+# Database
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=your-password
+POSTGRES_DB=file_storage
+DB_URL=postgresql+asyncpg://admin:your-password@database:5432/file_storage
+
+# JWT
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Redis
+REDIS_URL=redis://redis:6379
+MAX_REQUESTS_PER_MINUTE=60
+
+# S3 / Selectel
+S3_ACCESS_KEY=your-access-key
+S3_SECRET_KEY=your-secret-key
+S3_ENDPOINT_URL=https://s3.selectel.ru
+S3_BUCKET_NAME=your-bucket-name
+S3_DOMEN_URL=https://your-bucket-name.s3.selectel.ru
+```
+
+> Note: use `database` and `redis` as hostnames (not `localhost`) — these are service names inside the Docker network.
+
+**3. Build and start**
+
+```bash
+docker-compose up -d --build
+```
+
+**4. Check that everything is running**
+
+```bash
+docker-compose ps
+```
+
+API will be available at `http://localhost:8000`.
+Interactive docs: `http://localhost:8000/docs`
+
+**Useful commands:**
+
+```bash
+docker-compose logs -f app      # view app logs in real time
+docker-compose down             # stop all containers
+docker-compose down -v          # stop and delete all data (including DB)
+docker-compose up -d --build    # rebuild after code changes
+```
+
+---
+
+### Running without Docker (manual)
+
+#### Prerequisites
+
 - Python 3.11+
 - PostgreSQL
 - Redis
 - S3-compatible bucket (Selectel or AWS)
 
-### Installation
+#### Installation
 
 ```bash
 git clone https://github.com/OneSummon/S3-File-Storage-API.git
 cd S3-File-Storage-API
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Environment Variables
+#### Environment Variables
 
 Create a `.env` file in the project root:
 
@@ -84,8 +160,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 # Redis
 REDIS_URL=redis://localhost:6379
-
-# Rate Limiting
 MAX_REQUESTS_PER_MINUTE=60
 
 # S3 / Selectel
@@ -96,14 +170,11 @@ S3_BUCKET_NAME=your-bucket-name
 S3_DOMEN_URL=https://your-bucket-name.s3.selectel.ru
 ```
 
-### Run
+#### Run
 
 ```bash
 python main.py
 ```
-
-API will be available at `http://localhost:8000`.  
-Interactive docs: `http://localhost:8000/docs`
 
 ---
 
@@ -120,11 +191,11 @@ Interactive docs: `http://localhost:8000/docs`
 
 | Method | Endpoint | Description | Auth |
 |---|---|---|---|
-| POST | `/files/uploads` | Upload a file (max 5 GB) | ✅ |
-| GET | `/files/all` | List your files (paginated) | ✅ |
-| GET | `/files/{file_id}` | Get file metadata | ✅ |
-| GET | `/files/{file_id}/download` | Stream-download a file | ✅ |
-| DELETE | `/files/{file_id}` | Delete a file | ✅ |
+| POST | `/files/uploads` | Upload a file (max 5 GB) | Yes |
+| GET | `/files/all` | List your files (paginated) | Yes |
+| GET | `/files/{file_id}` | Get file metadata | Yes |
+| GET | `/files/{file_id}/download` | Stream-download a file | Yes |
+| DELETE | `/files/{file_id}` | Delete a file | Yes |
 
 All `/files` routes require a `Bearer` token in the `Authorization` header and are subject to rate limiting.
 
@@ -136,6 +207,12 @@ Tests use an in-memory SQLite database and mock S3/Redis - no external services 
 
 ```bash
 pytest
+```
+
+Or inside Docker:
+
+```bash
+docker-compose exec app pytest
 ```
 
 Test coverage includes:
