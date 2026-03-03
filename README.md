@@ -1,5 +1,12 @@
 # S3 File Storage API
 
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.128-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7-red?logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 A RESTful API for secure file storage built with **FastAPI**, **PostgreSQL**, **Redis**, and **S3-compatible object storage** (Selectel). Supports JWT authentication, per-IP rate limiting, and async file streaming.
 
 ---
