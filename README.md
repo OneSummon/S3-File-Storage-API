@@ -10,6 +10,9 @@
 A RESTful API for secure file storage built with **FastAPI**, **PostgreSQL**, **Redis**, and **S3-compatible object storage** (Selectel). Supports JWT authentication, per-IP rate limiting, and async file streaming.
 
 ---
+## Link
+
+http://my-s3-file-storage.ru:8000/docs
 
 ## Features
 
